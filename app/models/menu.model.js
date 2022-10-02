@@ -1,6 +1,14 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize, Sequelize) => {
+  const dish_types = [
+    'Entree and Slide',
+    'Durbar Special',
+    'Main Course',
+    'Drinks',
+    'Dessert',
+  ];
+  const categories = ['veg', 'non-veg'];
   const Menu = sequelize.define(
     'menus',
     {
@@ -24,24 +32,10 @@ module.exports = (sequelize, Sequelize) => {
       },
       dish_type: {
         type: Sequelize.STRING,
-        values: [
-          'Entree and Slide',
-          'Durbar Special',
-          'Main Course',
-          'Drinks',
-          'Dessert',
-        ],
+        values: dish_types,
         validate: {
           customValidator(value) {
-            if (
-              [
-                'Entree and Slide',
-                'Durbar Special',
-                'Main Course',
-                'Drinks',
-                'Dessert',
-              ].indexOf(value) === -1
-            ) {
+            if (dish_types.indexOf(value) === -1) {
               throw new Error('Dish type not recognized.');
             }
           },
@@ -52,10 +46,10 @@ module.exports = (sequelize, Sequelize) => {
       },
       category: {
         type: Sequelize.STRING,
-        values: ['veg', 'non-veg'],
+        values: categories,
         validate: {
           customValidator(value) {
-            if (['veg', 'non-veg'].indexOf(value) === -1) {
+            if (categories.indexOf(value) === -1) {
               throw new Error('Dish category not recognized.');
             }
           },
