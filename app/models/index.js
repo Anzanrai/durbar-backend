@@ -46,6 +46,12 @@ db.menu.belongsToMany(db.order, {
   otherKey: 'menuId',
 });
 
+db.user.belongsToMany(db.order, {
+  through: 'order_history',
+  foreignKey: 'orderId',
+  otherKey: 'userId',
+});
+
 db.ROLES = ['admin', 'staff', 'customer'];
 
 module.exports = db;
