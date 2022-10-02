@@ -40,7 +40,7 @@ module.exports = (sequelize, Sequelize) => {
                 'Main Course',
                 'Drinks',
                 'Dessert',
-              ].includes(value)
+              ].indexOf(value) === -1
             ) {
               throw new Error('Dish type not recognized.');
             }
@@ -55,7 +55,7 @@ module.exports = (sequelize, Sequelize) => {
         values: ['veg', 'non-veg'],
         validate: {
           customValidator(value) {
-            if (['veg', 'non-veg'].includes(value)) {
+            if (['veg', 'non-veg'].indexOf(value) === -1) {
               throw new Error('Dish category not recognized.');
             }
           },
