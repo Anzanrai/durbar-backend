@@ -11,20 +11,25 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING,
       allowNull: false,
       allowBlank: false,
-      unique: true,
+      unique: { arg: true, msg: 'This username is already taken.' },
     },
     email: {
       type: Sequelize.STRING,
       allowNull: false,
-      unique: true,
+      unique: {
+        arg: true,
+        msg: 'User with this email already registered. Try logging in.',
+      },
       validate: {
         isEmail: true,
       },
     },
     password: {
       type: Sequelize.STRING,
+      allowNull: false,
     },
   });
 
+  User.sync();
   return User;
 };

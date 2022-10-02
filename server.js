@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-
+const bcrypt = require('bcryptjs');
 const app = express();
 
 var corsOptions = {
@@ -18,10 +18,11 @@ app.use(express.urlencoded({ extended: true }));
 // database
 const db = require('./app/models');
 const Role = db.role;
+const User = db.user;
 
 db.sequelize.sync();
 // force: true will drop the table if it already exists
-// db.sequelize.sync({force: true}).then(() => {
+// db.sequelize.sync({ force: true }).then(() => {
 //   console.log('Drop and Resync Database with { force: true }');
 //   initial();
 // });
@@ -32,8 +33,10 @@ app.get('/', (req, res) => {
 });
 
 // routes
-require('./app/routes/auth.routes')(app);
-require('./app/routes/user.routes')(app);
+app.use('/api/auth', require('./app/routes/auth.routes'));
+// require('./app/routes/auth.routes')(app);
+// require('./app/routes/user.routes')(app);
+app.use('/api/menu', require('./app/routes/menu.routes'));
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
@@ -56,6 +59,15 @@ function initial() {
     id: 3,
     name: 'customer',
   });
+
+  let user = User.build({
+    id: 1,
+    username: 'root',
+    email: 'root@root.com',
+    password: bcrypt.hashSync('admin'),
+  });
+  user.setRoles([1]);
+  user.save();
 }
 
-initial();
+// initial();
