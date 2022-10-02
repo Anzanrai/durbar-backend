@@ -19,7 +19,7 @@ const retrieveMenu = (req, res) => {
 };
 
 const menuById = (req, res, next, id) => {
-  Menu.findByPk(req.params['menuId'])
+  Menu.findByPk(id)
     .then((menu) => {
       req.activeMenu = menu;
       next();
