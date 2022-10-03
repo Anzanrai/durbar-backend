@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize, Sequelize) => {
   const dish_types = [
-    'Entree and Slide',
+    'Entree and Side',
     'Durbar Special',
     'Main Course',
     'Drinks',
