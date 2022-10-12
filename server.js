@@ -37,6 +37,7 @@ app.use('/api/auth', require('./app/routes/auth.routes'));
 // require('./app/routes/auth.routes')(app);
 // require('./app/routes/user.routes')(app);
 app.use('/api/menu', require('./app/routes/menu.routes'));
+app.use('/api/order', require('./app/routes/order.routes'));
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
@@ -67,6 +68,33 @@ function initial() {
     password: bcrypt.hashSync('admin'),
   });
   user.setRoles([1]);
+  user.save();
+
+  user = User.build({
+    id: 2,
+    username: 'sachit',
+    email: 'Sachit.dhungana@gmail.com',
+    password: bcrypt.hashSync('Sachit@123'),
+  });
+  user.setRoles([2]);
+  user.save();
+
+  user = User.build({
+    id: 3,
+    username: 'sapanat',
+    email: 'sapana.tmg123@gmail.com',
+    password: bcrypt.hashSync('Sapana@1990$'),
+  });
+  user.setRoles([2]);
+  user.save();
+
+  user = User.build({
+    id: 4,
+    username: 'anjanraiz',
+    email: 'anzaan.rai@gmail.com',
+    password: bcrypt.hashSync('Anjanraiz'),
+  });
+  user.setRoles([3]);
   user.save();
 }
 

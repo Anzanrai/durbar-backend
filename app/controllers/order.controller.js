@@ -5,6 +5,20 @@ const _ = require('lodash');
 const Order = db.order;
 
 const createOrder = (req, res) => {
+  // Order.create({
+  //   customerName: req.body.customerName,
+  //   orderType: req.body.orderType,
+  //   tableNumber: req.body.tableNumber,
+  // })
+  //   .then((order) => {
+  //     order.setUsers(req.profile.id);
+  //     return res
+  //       .status(201)
+  //       .send({ message: 'Order created successfully.', data: order });
+  //   })
+  //   .catch((error) => {
+  //     return res.status(400).send({ message: error.message });
+  //   });
   let form = new formidable.IncomingForm();
   form.keepExtenstions = true;
   form.parse(req, (err, fields, files) => {
@@ -14,6 +28,7 @@ const createOrder = (req, res) => {
       });
     }
     const order = Order.build(fields);
+    order.setUsers(req.profile.id);
     order
       .save()
       .then((data) => {

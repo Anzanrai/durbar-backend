@@ -3,18 +3,21 @@ const formidable = require('formidable');
 const _ = require('lodash');
 const fs = require('fs');
 const crypto = require('crypto');
+const { Op } = require('sequelize');
+const {
+  successResponse,
+  errorResponse,
+} = require('../middleware/responseFormat');
 
 const Menu = db.menu;
 
 const retrieveMenu = (req, res) => {
   Menu.findAll()
     .then((menu) => {
-      res.status(200).send({
-        data: menu,
-      });
+      res.status(200).json(successResponse('OK', menu, res.statusCode));
     })
     .catch((error) => {
-      res.status(500).send({ message: error.message });
+      res.status(500).json(errorResponse(error.message, res.statusCode));
     });
 };
 
@@ -25,32 +28,43 @@ const menuById = (req, res, next, id) => {
       next();
     })
     .catch((error) => {
-      res.status(500).send({ message: error.message });
+      res.status(500).json(errorResponse(error.message, res.statusCode));
     });
 };
 
 const getMenuById = (req, res) => {
   if (req.activeMenu) {
-    res.status(200).send({ data: req.activeMenu });
+    res.status(200).json(successResponse('OK', req.activeMenu, res.statusCode));
   }
-  res.status(404).send({ message: 'Requested details cannot be retrieved.' });
+  res
+    .status(404)
+    .json(
+      errorResponse('Requested details could not be retrieved', res.statusCode)
+    );
 };
 
 const createMenu = (req, res) => {
+  console.log(req);
   let form = new formidable.IncomingForm();
+  console.log(form);
   form.keepExtenstions = true;
   form.parse(req, (err, fields, files) => {
     if (err) {
-      return res.status(400).json({
-        error: 'Image could not be uploaded.',
-      });
+      return res
+        .status(400)
+        .json(errorResponse('Error while parsing form data.', res.statusCode));
     }
     const menu = Menu.build(fields);
     if (files.photo) {
       if (files.photo.size > 1000000) {
-        return res.status(400).send({
-          message: 'Image file too large. Upload file less than 1Mb.',
-        });
+        return res
+          .status(400)
+          .json(
+            errorResponse(
+              'Image file too large. Upload file less than 1Mb.',
+              res.statusCode
+            )
+          );
       }
 
       photo = fs.readFileSync(files.photo.filepath);
@@ -62,12 +76,10 @@ const createMenu = (req, res) => {
     menu
       .save()
       .then((data) => {
-        res.status(201).send({
-          data: data,
-        });
+        res.status(201).json(successResponse('OK', data, res.statusCode));
       })
       .catch((error) => {
-        res.status(400).send({ message: error.message });
+        res.status(400).json(errorResponse(error.message, res.statusCode));
       });
   });
 };
@@ -77,18 +89,23 @@ const updateMenu = (req, res) => {
   form.keepExtenstions = true;
   form.parse(req, (err, fields, files) => {
     if (err) {
-      return res.status(400).json({
-        error: 'Image could not be uploaded.',
-      });
+      return res
+        .status(400)
+        .json(errorResponse('Error while parsing form data.', res.statusCode));
     }
     let menu = req.activeMenu;
     menu = _.extend(menu, fields);
 
     if (files.photo) {
       if (files.photo.size > 1000000) {
-        return res.status(400).json({
-          error: 'Image file too large. Upload file less than 1Mb.',
-        });
+        return res
+          .status(400)
+          .json(
+            errorResponse(
+              'Image file too large. Upload file less than 1Mb.',
+              res.statusCode
+            )
+          );
       }
       photo = fs.readFileSync(files.photo.filepath);
       let filename = crypto.randomBytes(4).toString('hex');
@@ -99,12 +116,10 @@ const updateMenu = (req, res) => {
     menu
       .save()
       .then((data) => {
-        res.status(200).send({
-          data: data,
-        });
+        res.status(200).json(successResponse('OK', data, res.statusCode));
       })
       .catch((error) => {
-        res.status(400).send({ message: error.message });
+        res.status(400).json(errorResponse(error.message, res.statusCode));
       });
   });
 };
@@ -118,12 +133,31 @@ const deleteMenu = (req, res) => {
       fs.unlinkSync(imagePath);
       return res
         .status(200)
-        .send({ message: 'Menu Item deleted successfully' });
+        .json(
+          successResponse(
+            'Menu Item deleted successfully',
+            data,
+            res.statusCode
+          )
+        );
     })
     .catch((error) => {
-      return res.status(400).send({
-        message: 'Something went wrong. Could not delete the menu-item',
-      });
+      return res.status(400).json(errorResponse(error.message, res.statusCode));
+    });
+};
+
+const menuByDishType = (req, res) => {
+  const dishType = req.query['dishType'];
+  console.log('Dish Type', dishType);
+  Menu.findAll({ where: { dish_type: { [Op.eq]: dishType } } })
+    .then((menuItems) => {
+      console.log('Menu Items', menuItems);
+      return res
+        .status(200)
+        .json(successResponse('OK', menuItems, res.statusCode));
+    })
+    .catch((error) => {
+      return res.status(400).json(errorResponse(error.message, res.statusCode));
     });
 };
 
@@ -134,4 +168,5 @@ module.exports = {
   menuById,
   updateMenu,
   deleteMenu,
+  menuByDishType,
 };

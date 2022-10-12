@@ -1,4 +1,5 @@
 const { DataTypes } = require('sequelize');
+const { User } = require('./user.model');
 
 module.exports = (sequelize, Sequelize) => {
   const Order = sequelize.define(
@@ -6,8 +7,8 @@ module.exports = (sequelize, Sequelize) => {
     {
       id: {
         type: DataTypes.INTEGER,
-        unique: true,
         primaryKey: true,
+        autoincrement: true,
       },
       customerName: {
         type: DataTypes.STRING,

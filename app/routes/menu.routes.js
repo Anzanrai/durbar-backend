@@ -7,11 +7,13 @@ const {
   deleteMenu,
   getMenuById,
   menuById,
+  menuByDishType,
 } = require('../controllers/menu.controller');
 
 const router = express.Router();
 
 router.get('/', retrieveMenu);
+router.get('/by-dish-type/', menuByDishType);
 router.get('/:menuId', getMenuById);
 router.post('/:userId', verifyToken, isAdmin, createMenu);
 router.put('/:userId/:menuId', verifyToken, isAdmin, updateMenu);
