@@ -2,6 +2,10 @@ const db = require('../models');
 const config = require('../config/auth.config');
 const User = db.user;
 const Role = db.role;
+const {
+  errorResponse,
+  successResponse,
+} = require('../middleware/responseFormat');
 
 const Op = db.Sequelize.Op;
 
@@ -36,7 +40,8 @@ exports.signup = (req, res) => {
       }
     })
     .catch((err) => {
-      res.status(500).send({ message: err.message });
+      console.log('error section.');
+      res.status(400).json(errorResponse(err.message, res.statusCode));
     });
 };
 

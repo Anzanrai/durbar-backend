@@ -27,7 +27,7 @@ const successResponse = (message, results, statusCode) => {
  * @param   {string} message
  * @param   {number} statusCode
  */
-const errorResponse = (message, statusCode) => {
+const errorResponse = (err, statusCode) => {
   // List of common HTTP request code
   const codes = [200, 201, 400, 401, 404, 403, 422, 500];
 
@@ -38,7 +38,7 @@ const errorResponse = (message, statusCode) => {
   else statusCode = findCode;
 
   return {
-    message,
+    err,
     code: statusCode,
   };
 };
